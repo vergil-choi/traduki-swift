@@ -14,30 +14,48 @@ class Traduki: NSObject {
     
     static let sharedInstance = Traduki()
     
-    let configFileURL = Bundle.main.url(forResource: "traduki", withExtension: "json")
+    lazy var config:[String: Any] = {
+        return self.loadFile("traduki")
+    }()
+    
     var cache: Translation = [:]
     var lang = Locale.current.languageCode ?? "en_US"
+    var directory = "Languages"
     
     private override init() {
         super.init()
     }
     
     func translate(key: String, lang: String?, params: [String: String]) -> String {
-        let dict = loadFile(lang ?? self.lang)
-        let string = getValue(dict: dict, dotkey: key)
-        return replace(trans: string, params: params)
+        let dict = loadLang(lang ?? self.lang)
+        if let string = getValue(dict: dict, dotkey: key) {
+            return replace(trans: string, params: params)
+        } else if let languages = config["languages"] as? [String], let fallback = languages.first {
+            let dict = loadLang(fallback)
+            if let string = getValue(dict: dict, dotkey: key) {
+                return replace(trans: string, params: params)
+            }
+        }
+        return key
     }
     
-    private func loadFile(_ lang: String) -> Translation {
+    private func loadLang(_ lang: String) -> Translation {
         
         if let value = cache[lang] {
             return value as! Translation
         }
         
-        if let fileURL = Bundle.main.url(forResource: lang, withExtension: "json", subdirectory: "Languages") {
+        let trans = loadFile(lang)
+        cache[lang] = trans
+        return trans
+    }
+    
+    private func loadFile(_ name: String) -> [String: Any] {
+        
+        if let fileURL = Bundle.main.url(forResource: name, withExtension: "json", subdirectory: directory) {
             if let data = try? Data.init(contentsOf: fileURL) {
                 if let value = try? JSONSerialization.jsonObject(with: data, options: []) {
-                    cache[lang] = value
+                    
                     return value as! [String : Any]
                 }
             }
@@ -46,14 +64,15 @@ class Traduki: NSObject {
         return [:]
     }
     
-    private func getValue(dict: Translation, dotkey: String) -> String {
+    private func getValue(dict: Translation, dotkey: String) -> String? {
         if dict.count == 0 {
-            return dotkey
+            return nil
         }
-        if let value = getValue(dict: dict, keys: dotkey.components(separatedBy: ".")) {
+        let keys = dotkey.components(separatedBy: ".")
+        if let value = getValue(dict: dict, keys: keys) {
             return value
         }
-        return dotkey
+        return nil
     }
     
     private func getValue(dict: Translation, keys: [String]) -> String? {

@@ -1,1 +1,1 @@
-{"label":{"big":"BIG","middle":"MIDDLE","little":{"2":"Little 2","1":"Little 1","_":"GREAT ONE {who}","3":"Little 3"}},"button":{"test":{"cool":"COOL","great":"GREAT","gorgeous":"GORGEOUS"}}}
+{"label":{"big":"label.big","middle":"label.middle","little":{"2":"label.little.2","1":"label.little.1","_":"GREAT ONE {who}","3":"label.little.3"}},"button":{"test":{"cool":"button.test.cool","great":"button.test.great","gorgeous":"button.test.gorgeous"}}}
