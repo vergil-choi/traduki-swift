@@ -39,6 +39,13 @@ class ViewController: UIViewController {
 //        __("button.test.cool")
 //        __("button.test.great")
 //        __("button.test.gorgeous")
+//        __("global.alert.cancel")
+//        __("global.alert.confirm")
+//        __("global.navi.back")
+//        __("global.navi.next")
+//        __("something.that-is-cool")
+//        __("nothing.isBad")
+        
         
     }
     

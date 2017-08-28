@@ -87,7 +87,10 @@ class Traduki: NSObject {
                 }
             }
         }
-        return getValue(dict: dict[keys.first!] as! Translation, keys: Array(keys[1..<keys.count]))
+        if let value = dict[keys.first!] as? Translation {
+            return getValue(dict: value, keys: Array(keys[1..<keys.count]))
+        }
+        return nil
     }
     
     private func replace(trans: String, params: [String: String]) -> String {
